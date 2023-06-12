@@ -14,7 +14,7 @@ final class CalculateViewController: UIViewController {
     
     private var formulasUntilNow = ""
     private var isZeroButtonUsed = true
-    private var isCurrentOperandLabelMadeFromResult = false
+    private var isCalculated = false
     
     private var currentFormula: String {
         guard let numberText = currentOperandLabel.text,
@@ -36,7 +36,7 @@ final class CalculateViewController: UIViewController {
     @IBAction func tappedOperandsButton(_ sender: UIButton) {
         guard let number = sender.currentTitle,
               let operandLabelText = currentOperandLabel.text,
-              isCurrentOperandLabelMadeFromResult == false,
+              isCalculated == false,
               checkOperandForm(operandLabelText + number) != "error" else {
             return
         }
@@ -51,7 +51,7 @@ final class CalculateViewController: UIViewController {
     @IBAction func tappedDotButton(_ sender: UIButton) {
         guard let operandLabelText = currentOperandLabel.text,
               operandLabelText.contains(".") == false,
-              isCurrentOperandLabelMadeFromResult == false else {
+              isCalculated == false else {
             return
         }
         
@@ -67,7 +67,7 @@ final class CalculateViewController: UIViewController {
         }
         
         guard checkOperandForm(operandLabelText + "0") != "error",
-              isCurrentOperandLabelMadeFromResult == false else {
+              isCalculated == false else {
             return
         }
         
@@ -83,7 +83,7 @@ final class CalculateViewController: UIViewController {
         }
         
         guard checkOperandForm(operandLabelText + "00") != "error",
-              isCurrentOperandLabelMadeFromResult == false else {
+              isCalculated == false else {
             return
         }
         
@@ -104,13 +104,13 @@ final class CalculateViewController: UIViewController {
         addCurrentFormula()
         currentOperatorLabel.text = sender.currentTitle
         
-        isCurrentOperandLabelMadeFromResult = false
+        isCalculated = false
         isZeroButtonUsed = false
         initializeOperandLabel()
     }
     
-    @IBAction func tappedResultButton(_ sender: Any) {
-        guard isCurrentOperandLabelMadeFromResult == false,
+    @IBAction func tappedResultButton(_ sender: UIButton) {
+        guard isCalculated == false,
               formulasUntilNow.isEmpty == false else {
             return
         }
@@ -123,16 +123,16 @@ final class CalculateViewController: UIViewController {
         currentOperandLabel.text = formattingNumber(result)
         formulasUntilNow.removeAll()
         
-        isCurrentOperandLabelMadeFromResult = true
+        isCalculated = true
         isZeroButtonUsed = true
         initializeOperatorLabel()
     }
     
-    @IBAction func tappedChangeSignButton(_ sender: Any) {
+    @IBAction func tappedChangeSignButton(_ sender: UIButton) {
         guard var operandLabelText = currentOperandLabel.text,
               operandLabelText != "0",
               checkOperandForm(operandLabelText) != "error",
-              isCurrentOperandLabelMadeFromResult == false else {
+              isCalculated == false else {
             return
         }
         
@@ -145,20 +145,20 @@ final class CalculateViewController: UIViewController {
         currentOperandLabel.text = operandLabelText
     }
     
-    @IBAction func tappedClearButton(_ sender: Any) {
+    @IBAction func tappedClearButton(_ sender: UIButton) {
         if formulasUntilNow.isEmpty {
             isZeroButtonUsed = true
         } else {
             isZeroButtonUsed = false
         }
         
-        isCurrentOperandLabelMadeFromResult = false
+        isCalculated = false
         initializeOperandLabel()
     }
     
-    @IBAction func tappedAllClearButton(_ sender: Any) {
+    @IBAction func tappedAllClearButton(_ sender: UIButton) {
         currentFormulaStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        isCurrentOperandLabelMadeFromResult = false
+        isCalculated = false
         isZeroButtonUsed = true
         initializeOperandLabel()
         initializeOperatorLabel()
